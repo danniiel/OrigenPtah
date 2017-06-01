@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Facelet Title</title>
+        <h:outputStylesheet library="css" name="bootstrap.min.css"/>
+        <h:outputStylesheet library="css" name="sesion.css" />
+    </h:head>
+    <h:body>
+        <div class="container">        
+            <h:form class="form-signin">
+                <h2 class="form-signin-heading">Iniciar Sesión</h2>
+                <p:messages autoUpdate="true"/>
+                    <p:outputLabel for="txtUsuario" value="Usuario" class="sr-only"/>
+                    <p:inputText id="txtUsuario" class="form-control" placeholder="Usuario" value="#{sessionControlador.persona.usuario}" required="true"/>
+
+                    <p:outputLabel for="txtContraseña" value="Contraseña" class="sr-only"/>
+                    <p:password id="txtContraseña" class="form-control" placeholder="Contraseña" value="#{sessionControlador.persona.contrasena}" required="true"/>
+
+                    <h:column/>
+                    <p:commandButton class="btn btn-lg btn-primary btn-block" value="Iniciar Sesión" action="#{sessionControlador.inicioSession()}"/>
+                <p:link outcome="registrarse" value="Registrarse"/>
+            </h:form>
+        </div>
+    </h:body>
+</html>
+

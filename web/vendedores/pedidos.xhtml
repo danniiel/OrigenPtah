@@ -1,0 +1,112 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+        <h:outputStylesheet library="css" name="estilo.css" />
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:growl id="messages" autoUpdate="true" life="3000"/>
+            <h4>
+                <p>Pedidos</p>
+                <div id="sesion">
+                    <h:outputLabel>
+                        #{session.getAttribute("username").nombres}                            
+                    </h:outputLabel>
+                    <p:commandLink action="#{sessionControlador.logout()}">
+                        <h:outputText value="Cerrar Session"/>
+                    </p:commandLink>
+                </div>
+            </h4>
+            <p:panel>
+
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank">
+                    <h:panelGroup>
+                        <p:outputLabel class="col-md-3 control-label" for="codigoPedido" value="Codigo Pedido: "/>
+                        <p:outputLabel id="codigoPedido" value="#{pedidosControlador.pedidos.codigoPedido}"/>
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <p:outputLabel class="col-md-3 control-label" value="Vendedor:"></p:outputLabel>                        
+                        <h:outputLabel value="">
+                            #{session.getAttribute("username").nombres}                            
+                        </h:outputLabel>                        
+                    </h:panelGroup>                    
+                </p:panelGrid>
+                <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank">
+                    <h:panelGroup>
+                        <p:outputLabel class="col-md-3 control-label" for="fecha" value="Fecha Pedido: "/>
+                        <p:outputLabel id="fecha" value="#{pedidosControlador.pedidos.fechaPedido}">
+                            <f:convertDateTime pattern="dd/MMM/yyyy"/>
+                        </p:outputLabel>
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <p:outputLabel class="col-md-3 control-label" for="estado" value="Estado Pedido: "/>
+                        <p:selectOneMenu id="estado" value="#{pedidosControlador.pedidos.estadoPedido}" converter="#{estadoPedidoConverter}" >
+                            <f:selectItem itemLabel="--Seleccione--"/>
+                            <f:selectItems value="#{pedidosControlador.estadoPedido}" var="e" itemLabel="#{e.nombreEstadoPedido}" itemValue="#{e}"/>
+                        </p:selectOneMenu>                        
+                    </h:panelGroup>                    
+                </p:panelGrid>
+                <p:panelGrid columns="1" columnClasses="ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank">
+                    <h:panelGroup>
+                        <p:outputLabel class="col-md-3 control-label" for="total" value="Total: "/>
+                        <p:outputLabel id="total" value="#{pedidosControlador.total}" style="margin-left: 80px"/>
+                    </h:panelGroup>
+                </p:panelGrid>
+            </p:panel>
+            <br/>
+            <p:panel>
+                <p:panelGrid>
+                    <h:panelGroup>
+                        <p:outputLabel for="producto" class="col-md-1 control-label"  value="Producto: "/>
+                        <p:autoComplete id="producto" value="#{pedidosControlador.productos}" completeMethod="#{pedidosControlador.completeString}"
+                                        var="prod" itemLabel="#{prod.nombreProducto}" itemValue="#{prod}" converter="#{productosConverter}">
+                            <p:column headerText="Código">
+                                <h:outputText value="#{prod.referenciaProducto}"/>
+                            </p:column>
+                            <p:column headerText="Nombre">
+                                <h:outputText value="#{prod.nombreProducto}"/>
+                            </p:column>
+                            <p:column headerText="Cantidad">
+                                <h:outputText value="#{prod.cantidadProducto}"/>
+                            </p:column>    
+                        </p:autoComplete>
+                        <p:outputLabel class="lblcantidad" value="Cant: "/>
+                        <p:inputText class="cantidad" value="#{pedidosControlador.detallePedido.cantidadProducto}"/>
+                        <p:commandButton class="agregar" value="Agregar" actionListener="#{pedidosControlador.agregar()}" update="detallePed,total"/>
+                    </h:panelGroup>                    
+                </p:panelGrid>
+                <br/>
+                <p:dataTable id="detallePed" value="#{pedidosControlador.listaDetalle}" var="detalle" editable="true">
+                    <p:ajax event="rowEdit" listener="#{pedidosControlador.onRowEdit}" />
+                    <p:ajax event="rowEditCancel" listener="#{pedidosControlador.onRowCancel}" />
+                    <p:column headerText="Referencia">
+                        <p:outputLabel value="#{detalle.codigoProducto.referenciaProducto}"/>
+                    </p:column>
+                    <p:column headerText="Nombre">
+                        <p:outputLabel value="#{detalle.codigoProducto.nombreProducto}"/>
+                    </p:column>
+                    <p:column headerText="Precio">
+                        <p:outputLabel value="#{detalle.codigoProducto.precioVenta}"/>
+                    </p:column>
+                    <p:column headerText="Cantidad">
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{detalle.cantidadProducto}"/></f:facet>
+                            <f:facet name="input"><p:inputText value="#{detalle.cantidadProducto}" style="width:100%"/></f:facet>
+                        </p:cellEditor>                        
+                    </p:column>
+                    <p:column style="width:32px">
+                        <p:rowEditor />
+                    </p:column>                    
+                </p:dataTable>                
+                <br/>
+                <p:commandButton value="Guardar" actionListener="#{pedidosControlador.guardarPedido()}"/>
+            </p:panel>           
+        </h:form>
+    </h:body>
+</html>
